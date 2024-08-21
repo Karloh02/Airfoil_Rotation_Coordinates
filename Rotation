@@ -1,19 +1,12 @@
 #desafio - fazer um programa que:
 
-#leia um arquivo de texto.
-#Redimensione o perfil no tamanho que eu quero.
-#rotacione o perfil no angulo que quero.
-#rotacione o perfil no plano que quero.
-#calcular o Centro de masse e/ou centro geométrico para me auxiliar na modelagem. 
-#salvar todos os dados em um excel.
-#executar a macro do Catia. 
-
-
-#Como plotar em um gráfico 3D no matplotlib
-#grafico = plt.figure().add_subplot(projection="3d")
-#grafico.scatter(points_x, points_y, points_z)
-#plt.grid(True)
-#plt.show()
+#leia um arquivo de texto.                                                          -> OK
+#Redimensione o perfil no tamanho que eu quero.                                     -> OK
+#rotacione o perfil no angulo que quero.                                            -> OK
+#rotacione o perfil no plano que quero.                                             -> OK
+#calcular o Centro de masse e/ou centro geométrico para me auxiliar na modelagem.   -> OK
+#salvar todos os dados em um excel.                                                 -> OK
+#executar a macro do Catia.                                                         
 
 import numpy as np 
 import matplotlib.pyplot as plt
@@ -63,6 +56,12 @@ def translate(trans_x, trans_y, trans_z, x, y, z, chord):
         points_y.append(y[i]*chord + trans_y)
         points_z.append(z[i]*chord + trans_z)
 
+    xdot, ydot , zdot = geometric_center(points_x, points_y, points_z)
+
+    points_x.append(xdot)
+    points_y.append(ydot)
+    points_z.append(zdot)
+
     grafico = plt.figure().add_subplot(projection="3d")
     grafico.scatter(points_x, points_y, points_z)
     plt.grid(True)
@@ -70,6 +69,7 @@ def translate(trans_x, trans_y, trans_z, x, y, z, chord):
 
     return(points_x, points_y, points_z)
 
+#salva a plnilha excel com todas as informações
 def excel_save(x, y, z, nome):
 
     name = str(nome) + ".xlsx"
@@ -84,6 +84,19 @@ def excel_save(x, y, z, nome):
     
     workbook.close()
 
+#Acha o centro geométrico do perfil
+def geometric_center(x, y, z):
+    xdot = 0
+    ydot = 0
+    zdot = 0
+
+    for i in range(len(x)):
+
+        xdot += x[i]/len(x)
+        ydot += y[i]/len(y)
+        zdot += z[i]/len(z)
+    
+    return(xdot, ydot, zdot)
 
 
 #primeiro rotaciona em relação ao ponto
