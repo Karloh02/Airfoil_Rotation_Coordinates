@@ -18,26 +18,34 @@ def rotate_point(dir, ang):
     points_a = []
     points_b = []
     points_c = []
+    
+    #raio de rotação na minha função
+    radius = []
 
     arq = np.loadtxt(dir)
 
     for i in range(len(arq)):
        points_a.append(arq[i][0]*np.cos((ang*np.pi)/180) - arq[i][1]*np.sin((ang*np.pi)/180))
-       points_b.append(arq[i][0]*np.sin((ang*np.pi)/180) + arq[i][1]*np.sin((ang*np.pi)/180))
+       points_b.append(arq[i][0]*np.sin((ang*np.pi)/180) + arq[i][1]*np.cos((ang*np.pi)/180))
        points_c.append(0)
+       radius.append(arq[i][1])
 
-    return(points_a, points_b, points_c)
+    return(points_a, points_b, points_c, radius)
 
 #rotaciona o ângulo em relação ao plano (falta testar se esta rotacionando certo)
-def rotate_plane(x, y, z, ang):
+def rotate_plane(x, y, z, raio, ang):
     points_x = []
     points_y = []
     points_z = []
+
     for i in range(len(x)):
 
-        points_y.append(y[i])
-        points_x.append(x[i]*np.cos((ang*np.pi)/180) - z[i]*np.sin((ang*np.pi)/180))
-        points_z.append(x[i]*np.sin((ang*np.pi)/180) + z[i]*np.sin((ang*np.pi)/180))
+        points_x.append(x[i])
+        points_y.append(y[i] - ((raio[i]*np.sin((np.pi*ang)/180))/(np.sin((np.pi*(90-(ang/2))/180))))*np.sin(np.pi*(ang)/180))
+        points_z.append(((raio[i]*np.sin((np.pi*ang)/180))/(np.sin(np.pi*(90 - ang/2)/180)))*np.cos((np.pi*(ang))/180))
+
+        #points_y.append(y[i]*np.cos((ang*np.pi)/180) - z[i]*np.sin((ang*np.pi)/180))
+        #points_z.append(y[i]*np.sin((ang*np.pi)/180) + z[i]*np.cos((ang*np.pi)/180))
 
     return(points_x, points_y, points_z)
 
@@ -100,10 +108,10 @@ def geometric_center(x, y, z):
 
 
 #primeiro rotaciona em relação ao ponto
-x,y,z = (rotate_point(r"C:\Users\U57534\OneDrive - Bühler\Desktop\FINS\GOE-775.txt", 45))
+x,y,z, raio = (rotate_point(r"C:\Users\U57534\OneDrive - Bühler\Desktop\FINS\S1046.txt", 30))
 
 #rotaciona em relação ao eixo
-xx, yy, zz = rotate_plane(x,y,z,5)
+xx, yy, zz = rotate_plane(x,y,z, raio, 5)
 
 #translada e aumenta 
 xxx, yyy, zzz = translate(0, 0, 0, xx, yy, zz, 100)
