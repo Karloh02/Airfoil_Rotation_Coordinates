@@ -1,19 +1,25 @@
 #desafio - fazer um programa que:
-#leia um arquivo de texto 
-#Redimensione o perfil no tamanho que eu quero 
-#rotacione o perfil no angulo que quero 
-#rotacione o perfil no plano que quero 
+
+#leia um arquivo de texto.
+#Redimensione o perfil no tamanho que eu quero.
+#rotacione o perfil no angulo que quero.
+#rotacione o perfil no plano que quero.
 #calcular o Centro de masse e/ou centro geométrico para me auxiliar na modelagem. 
-#salvar todos os dados em um excel 
+#salvar todos os dados em um excel.
 #executar a macro do Catia. 
+
+
+#Como plotar em um gráfico 3D no matplotlib
+#grafico = plt.figure().add_subplot(projection="3d")
+#grafico.scatter(points_x, points_y, points_z)
+#plt.grid(True)
+#plt.show()
 
 import numpy as np 
 import matplotlib.pyplot as plt
 
-
-
-
-def rotatae_xy(dir, ang):
+#Coloca o ângulo de ataque do perfil definido
+def rotate_point(dir, ang):
 
     points_a = []
     points_b = []
@@ -21,17 +27,55 @@ def rotatae_xy(dir, ang):
 
     arq = np.loadtxt(dir)
 
-    # dir [i][0] = coordenada x
-    # dir [i][1] = coordenada y  
-    print(np.sin((ang*np.pi)/180))
     for i in range(len(arq)):
-        points_a.append(dir[i][0]*np.cos((ang*np.pi)/180) - dir[i][1]*np.sin((ang*np.pi)/180))
-        points_b.append(dir[i][0]*np.sin((ang*np.pi)/180) + dir[i][1]*np.sin((ang*np.pi)/180))
-        points_c.append(0)
-
-    
+       points_a.append(arq[i][0]*np.cos((ang*np.pi)/180) - arq[i][1]*np.sin((ang*np.pi)/180))
+       points_b.append(arq[i][0]*np.sin((ang*np.pi)/180) + arq[i][1]*np.sin((ang*np.pi)/180))
+       points_c.append(0)
 
     return(points_a, points_b, points_c)
 
+#rotaciona o ângulo em relação ao plano (falta testar se esta rotacionando certo)
+def rotate_plane(x, y, z, ang):
+    points_x = []
+    points_y = []
+    points_z = []
+    for i in range(len(x)):
 
-rotatae_xy(r"C:\Users\U57534\OneDrive - Bühler\Desktop\FINS\GOE-775.txt", 30)
+        points_y.append(y[i])
+        points_x.append(x[i]*np.cos((ang*np.pi)/180) - z[i]*np.sin((ang*np.pi)/180))
+        points_z.append(x[i]*np.sin((ang*np.pi)/180) + z[i]*np.sin((ang*np.pi)/180))
+
+    return(points_x, points_y, points_z)
+
+#translada nos eixos coordenados e coloca o tamanho da corda do perfil.
+#recebe os pontos já rotacionados, aumenta a cora e então translada eles.
+#caso translade antes e adicione a corda depois o perfil irá ficar desproporcional.
+def translate(trans_x, trans_y, trans_z, x, y, z, chord):
+
+    #possibilidade de fazer as duas coisas no mesmo loop, porém executando o aumento antes. 
+    points_x = []
+    points_y = []
+    points_z = []
+
+    for i in range(len(x)):
+        points_x.append(x[i]*chord + trans_x)
+        points_y.append(y[i]*chord + trans_y)
+        points_z.append(z[i]*chord + trans_z)
+
+    grafico = plt.figure().add_subplot(projection="3d")
+    grafico.scatter(points_x, points_y, points_z)
+    plt.grid(True)
+    plt.show()
+
+    return(points_x, points_y, points_z)
+
+#primeiro rotaciona em relação ao ponto
+x,y,z = (rotate_point(r"C:\Users\marta\Desktop\Programacao\Airfoil_Rotation\GOE_409.txt", 45))
+
+#rotaciona em relação ao eixo
+xx, yy, zz = rotate_plane(x,y,z,5)
+
+#translada e aumenta 
+translate(0, 0, 0, xx, yy, zz, 100)
+
+#salva em um novo excel, no futuro 
