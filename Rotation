@@ -17,6 +17,7 @@
 
 import numpy as np 
 import matplotlib.pyplot as plt
+import xlsxwriter
 
 #Coloca o ângulo de ataque do perfil definido
 def rotate_point(dir, ang):
@@ -69,13 +70,30 @@ def translate(trans_x, trans_y, trans_z, x, y, z, chord):
 
     return(points_x, points_y, points_z)
 
+def excel_save(x, y, z, nome):
+
+    name = str(nome) + ".xlsx"
+
+    workbook = xlsxwriter.Workbook(name)
+    worksheet = workbook.add_worksheet("Values")
+    
+    for i in range(len(x)):
+        worksheet.write(i, 0, x[i])
+        worksheet.write(i, 1, y[i])
+        worksheet.write(i, 2, z[i])
+    
+    workbook.close()
+
+
+
 #primeiro rotaciona em relação ao ponto
-x,y,z = (rotate_point(r"C:\Users\marta\Desktop\Programacao\Airfoil_Rotation\GOE_409.txt", 45))
+x,y,z = (rotate_point(r"C:\Users\U57534\OneDrive - Bühler\Desktop\FINS\GOE-775.txt", 45))
 
 #rotaciona em relação ao eixo
 xx, yy, zz = rotate_plane(x,y,z,5)
 
 #translada e aumenta 
-translate(0, 0, 0, xx, yy, zz, 100)
+xxx, yyy, zzz = translate(0, 0, 0, xx, yy, zz, 100)
 
 #salva em um novo excel, no futuro 
+excel_save(xxx, yyy, zzz, "Teste_Perfil")
