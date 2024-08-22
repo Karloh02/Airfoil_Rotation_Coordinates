@@ -7,3 +7,6 @@ The Centroid of the airfoil is also calculated, so during development you can ha
 For the future I intend to add "macros" to this code, soi it can auto upadate de CAD software with all the airfoils.
 
 Any doubts and/or sugestions, feel free to ask me via e-mail: gabrielraka@hotmail.com
+
+
+Sources: https://www.engr.uvic.ca/~mech410/lectures/4_2_RotateArbi.pdf
